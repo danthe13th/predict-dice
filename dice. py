@@ -1,0 +1,47 @@
+import random
+import numpy as np
+from sklearn.neural_network import MLPClassifier
+
+# Define the number of sides on each dice
+num_sides = 6
+
+# Define the number of previous samples to use for prediction
+num_samples = 10
+
+# Generate some training data by rolling the 3 dice and storing the results
+training_data = []
+for i in range(1000):
+    dice1 = random.randint(1, num_sides)
+    dice2 = random.randint(1, num_sides)
+    dice3 = random.randint(1, num_sides)
+    total = dice1 + dice2 + dice3
+    training_data.append([dice1, dice2, dice3, total])
+
+# Convert the training data to a numpy array
+training_data = np.array(training_data)
+
+# Define the inputs and outputs for the neural network
+inputs = training_data[:, :num_samples]
+outputs = training_data[:, num_samples]
+
+# Train the neural network using the Multi-layer Perceptron (MLP) classifier
+mlp = MLPClassifier(hidden_layer_sizes=(num_samples,), max_iter=1000)
+mlp.fit(inputs, outputs)
+
+# Generate some test data by rolling the 3 dice and storing the results
+test_data = []
+for i in range(100):
+    dice1 = random.randint(1, num_sides)
+    dice2 = random.randint(1, num_sides)
+    dice3 = random.randint(1, num_sides)
+    test_data.append([dice1, dice2, dice3])
+
+# Convert the test data to a numpy array
+test_data = np.array(test_data)
+
+# Predict the outcomes for the test data using the trained neural network
+predictions = mlp.predict(test_data)
+
+# Print the predictions and the actual outcomes
+for i in range(len(test_data)):
+    print(f"Rolls: {test_data[i]}, Predicted outcome: {predictions[i]}, Actual outcome: {sum(test_data[i])}")
